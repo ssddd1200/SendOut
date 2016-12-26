@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingke.dao.EmployeeDao">
+	
+<!-- 	<resultMap id="BaseResultMap" type="com.qingke.pojo.Employee" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR"/>
+  </resultMap> -->
+	
+	<select id="getAll" resultType="com.qingke.pojo.Employee">
+		select id,name,telphone as 'tel',email,(select code from employee_limit where id=employee_limit_id) as 'status' from employee
+	</select>
+	
+	<select id="loginWeb" resultType="com.qingke.pojo.Employee">
+		select id,name,telphone as 'tel',email,(select code from employee_limit where id=employee_limit_id) as 'status' from employee where id =(select employee_id from e_load where username=#{username} and password=#{pwd})
+	</select>
+	
+	<update id="changeInfo">
+		update employee set email=#{email},telphone=#{phone} where id=#{id};
+	</update>
+	
+	<update id="changePassword">
+		update e_load set password=#{newPassword} where employee_id=#{id};
+	</update>
+	
+	<insert id="addPassword">
+		insert into e_load(username,password,employee_id) values(#{username},'123456',#{id})
+	</insert>
+	
+	<update id="changeManInfo">
+		update employee set name=#{name},telphone=#{phone},email=#{email},employee_limit_id=(select id from employee_limit where code=#{limit}) where id=#{id};
+	</update>
+	
+	<insert id="addEmployee">
+		insert into employee(id,name,telphone,email,employee_limit_id)values(#{id},#{name},#{phone},#{email},(select id from employee_limit where code=#{limit}));
+		
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<delete id="delManger">
+		delete from employee where id=#{id};
+	</delete>
+	
+	<select id="isExit" resultType="java.lang.String">
+		select 'Y' from employee where id=#{id};
+	</select>
+</mapper>

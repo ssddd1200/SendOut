@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingke.dao.OrderDao">
+
+	<select id="selectOrder" resultType="com.qingke.pojo.Order">
+	<if test="name == null">
+		SELECT o.id as 'id',m.name as 'name',m.telphone as 'merPhone',m.address as 'merAdd',c.name as 'cname',c.telphone as 'ctel',cd.address as 'cadd',k.name as 'kname',k.telphone as 'ktel',os.code as 'status' FROM `order` o,o_status os,goods_has_order go,goods g,merchants m,knight k,consumer c,cus_address cd WHERE o.o_states_id = os.id AND o.id = go.order_id AND go.goods_id = g.id AND g.merchants_id = m.id AND o.knight_id = k.id AND o.consumer_id = c.id AND c.id = cd.consumer_id AND cd.static_add = 'Y';
+	</if>
+	<if test="name !=null">
+		SELECT o.id as 'id',m.name as 'name',m.telphone as 'merPhone',m.address as 'merAdd',c.name as 'cname',c.telphone as 'ctel',cd.address as 'cadd',k.name as 'kname',k.telphone as 'ktel',os.code as 'status' FROM `order` o,o_status os,goods_has_order go,goods g,merchants m,knight k,consumer c,cus_address cd WHERE o.o_states_id = os.id AND o.id = go.order_id AND go.goods_id = g.id AND g.merchants_id = m.id AND o.knight_id = k.id AND o.consumer_id = c.id AND c.id = cd.consumer_id AND cd.static_add = 'Y' and m.name like concat('%',#{name},'%');
+	</if>
+	</select>
+	
+	<update id="changeOrderStatus">
+		update `order` set o_states_id=(select id from o_status where code=#{status}) where id =#{id};
+	</update>
+</mapper>

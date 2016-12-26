@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingke.dao.KnightDao">
+
+	<select id="selectKnight" resultType="com.qingke.pojo.Knight">
+	<if test="name == null">		
+	select id,name,telphone,DATE_FORMAT(create_time,'%Y-%m-%d') as 'ctime',(select code from k_status where id = k_states_id) as 'status' from knight;
+	</if>
+	<if test="name != null">
+		select id,name,telphone,DATE_FORMAT(create_time,'%Y-%m-%d') as 'ctime',(select code from k_status where id = k_states_id) as 'status' from knight where name like concat('%',#{name},'%');
+	</if>
+	</select>
+
+	<update id="changeKnightStatus">
+		update knight set k_states_id=(select id from k_status where code=#{status}) where id=#{id};
+	</update>
+</mapper>

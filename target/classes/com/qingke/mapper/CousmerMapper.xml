@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingke.dao.CousmerDao">
+
+	<select id="selectCousmer" resultType="com.qingke.pojo.Cousmer">
+	<if test="name == null">
+		select c.id as 'id',c.name as 'name',c.telphone as 'telphone',ca.address as 'address',DATE_FORMAT(c.sign_time,'%Y-%m-%d') as 'signTime',DATE_FORMAT(c.last_login_time,'%Y-%m-%d') as 'lastTime' from consumer c,cus_address ca where ca.consumer_id = c.id and ca.static_add = 'Y';
+	</if>
+	<if test="name != null">
+		select c.id as 'id',c.name as 'name',c.telphone as 'telphone',ca.address as 'address',DATE_FORMAT(c.sign_time,'%Y-%m-%d') as 'signTime',DATE_FORMAT(c.last_login_time,'%Y-%m-%d') as 'lastTime' from consumer c,cus_address ca where ca.consumer_id = c.id and ca.static_add = 'Y' and name like concat('%',#{name},'%');
+	</if>
+	</select>
+	
+	<delete id="delCousmer">
+		delete cus_address where consumer_id =#{id};
+	</delete>
+	
+	<delete id="delAdd">
+		delete consumer where consumer_id=#{id};
+	
+	</delete>
+</mapper>
